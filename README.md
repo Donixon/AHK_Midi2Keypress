@@ -6,7 +6,7 @@ I was not happy with these results so I looked further to make it work. After th
 
 # My change's
 I added some lines to the AHK script to support the Spotify calls:
-
+```
 #InstallKeybdHook
 #UseHook
 DetectHiddenWindows, On
@@ -29,8 +29,10 @@ spotifyKey(key) {
 	ControlSend, , %key%, ahk_id %spotifyHwnd%
 	Return
 }
-Where you can add keystrokes and scripts I added these lines:
+```
 
+Where you can add keystrokes and scripts I added these lines:
+```
 if (data1 = 8)			; THIS is the item to edit,  put your note number here,  in place of 43
 		{
 			spotifyKey("{Space}") ;Pause Spotify
@@ -72,3 +74,4 @@ if (data1 = 8)			; THIS is the item to edit,  put your note number here,  in pla
 			}
 			Return
 		}
+```
