@@ -5,7 +5,7 @@ I build the MisteRdeck (https://www.thingiverse.com/thing:4627779) and wanted to
 I was not happy with these results so I looked further to make it work. After that I found Midi2Keypress. It is a fully AHK script that captures a midi-press and with the script you can add keystrokes to it. I wanted to control Spotify with the MisteRdeck, so I did.
 
 # My change's
-I added some lines to the AHK script to support the Spotify calls:
+I added some lines to the AHK script to support the Spotify calls (credits: https://gist.github.com/jcsteh/7ccbc6f7b1b7eb85c1c14ac5e0d65195):
 ```
 #InstallKeybdHook
 #UseHook
@@ -33,7 +33,7 @@ spotifyKey(key) {
 
 Where you can add keystrokes and scripts I added these lines:
 ```
-if (data1 = 8)			; THIS is the item to edit,  put your note number here,  in place of 43
+		if (data1 = 8)			; THIS is the item to edit,  put your note number here,  in place of 43
 		{
 			spotifyKey("{Space}") ;Pause Spotify
 			Return
