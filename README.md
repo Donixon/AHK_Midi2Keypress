@@ -1,10 +1,10 @@
-AHK_Midi2Keypress + MisteRdeck
+# AHK_Midi2Keypress + MisteRdeck
 I build the MisteRdeck (https://www.thingiverse.com/thing:4627779) and wanted to add scripts to the key-presses. The MisteRdeck is made to use with OBS but I don’t stream. So, I wanted to try to capture the midi-keys and hook an AutoHotkey script to it. Tried some things to make it work like:
 
 Midi2Key: https://midikey2key.de/ + AutoHotkey o I monitored the keys-press with Midikey2Key and then it would also convert the midi-press to a keystroke like CTRL+ALT+M. After that AutoHotkey would monitor if a CTRL+ALT+M was hit; if so, it would do something (like NEXT in Spotify) This worked semi but the software was instable and would crash a lot. Also, I didn’t like that I needed to kinds of software to make it work.
 I was not happy with these results so I looked further to make it work. After that I found Midi2Keypress. It is a fully AHK script that captures a midi-press and with the script you can add keystrokes to it. I wanted to control Spotify with the MisteRdeck, so I did.
 
-The changes I made
+# My change's
 I added some lines to the AHK script to support the Spotify calls:
 
 #InstallKeybdHook
