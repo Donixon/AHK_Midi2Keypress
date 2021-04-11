@@ -18,7 +18,12 @@ add input box to enter the note number for the trigger?
 Maybe not needed.
     
 */
-  
+
+
+;#NoTrayIcon
+#InstallKeybdHook
+#UseHook
+DetectHiddenWindows, On
 #Persistent
 #SingleInstance, force
 SetTitleMatchMode, 2
@@ -27,11 +32,31 @@ SetWorkingDir %A_ScriptDir% 	; Ensures a consistent starting directory.
 ; =============== 
   version = Midi2keypress_1.0 ; Change this title to suit you,  will generate .ini file with port selection
 ; =============== 
+
+; Get the HWND of the Spotify main window.
+getSpotifyHwnd() {
+	WinGet, spotifyHwnd, ID, ahk_exe spotify.exe
+	; We need the app's third top level window, so get next twice.
+	spotifyHwnd := DllCall("GetWindow", "uint", spotifyHwnd, "uint", 2)
+	spotifyHwnd := DllCall("GetWindow", "uint", spotifyHwnd, "uint", 2)
+	Return spotifyHwnd
+}
+
+; Send a key to Spotify.
+spotifyKey(key) {
+	spotifyHwnd := getSpotifyHwnd()
+	; Chromium ignores keys when it isn't focused.
+	; Focus the document window without bringing the app to the foreground.
+	ControlFocus, Chrome_RenderWidgetHostHWND1, ahk_id %spotifyHwnd%
+	ControlSend, , %key%, ahk_id %spotifyHwnd%
+	Return
+}
+
 readini()					; load midi port from .ini file 
 gosub, MidiPortRefresh        ; used to refresh the input and output port lists - see label below 
 port_test(numports)   		; test the ports - check for valid ports?
 gosub, midiin_go              ; opens the midi input port listening routine
-gosub, midiMon           	; see below - a midi monitor gui - for learning mostly - comment this line eventually.
+;gosub, midiMon           	; see below - a midi monitor gui - for learning mostly - comment this line eventually.
 
 
 /* 
@@ -53,6 +78,7 @@ MidiMsgDetect(hInput, midiMsg, wMsg) ; !!!! Midi input section in calls this fun
   Statusbyte, midi channel, data1, data2 - they are all combined into one midi message
   https://www.nyu.edu/classes/bello/FMT_files/9_MIDI_code.pdf
 */
+
 {
 	global statusbyte, chan, note, cc, data1, data2, stb ; !!!! Make these vars global to be used in other functions
 	; Extract Vars by extracting from midi message
@@ -76,19 +102,48 @@ MidiMsgDetect(hInput, midiMsg, wMsg) ; !!!! Midi input section in calls this fun
 		stb := "NoteOn"               ; Set gui var !!! no edit this line
 		
 		;~ -----if the note is # 43 show msgbox ----------------------
-		if (data1 = 43)			; THIS is the item to edit,  put your note number here,  in place of 43
+		if (data1 = 8)			; THIS is the item to edit,  put your note number here,  in place of 43
 		{
-			MsgBox, , , Note On # %data1% pushed,2  ; for demonstration - msgbox will disappear after 2s
-			;~ -----------put your keystrokes here ----- uncomment below to see what it does to notepad ---------			
-			; WinActivate, ahk_exe notepad.exe	  	; activate program - notepad should be started first
-			; send, Midi2Keys sent to notepad,      ; If notepad is open send the keystrokes to notpad
+			spotifyKey("{Space}") ;Pauzeer Spotify
+			Return
 		}
-		if (data1 = 42)			; THIS is the item to edit,  put your note number here,  in place of 42
+		if (data1 = 5)			; THIS is the item to edit,  put your note number here,  in place of 42
 		{
-			MsgBox, , , Note On # %data1% pushed,2	  ; for demonstration - msgbox will disappear after 2s
-			;~ -----------put your keystrokes here -----------------------
-			; try something other keystrokes
+			spotifyKey("^{Right}") ;Volgende Spotify
+			Return
 		}
+		
+		if (data1 = 11)			; THIS is the item to edit,  put your note number here,  in place of 42
+		{
+			spotifyKey("^{Left}") ;Vorige Spotify
+			Return
+		}
+
+		if (data1 = 9)			; THIS is the item to edit,  put your note number here,  in place of 42
+		{
+			spotifyKey("^{Up}") ;Volume + Spotify
+			Return
+		}
+
+		if (data1 = 7)			; THIS is the item to edit,  put your note number here,  in place of 42
+		{
+			spotifyKey("^{Down}") ;Volume - Spotify
+			Return
+		}
+
+		if (data1 = 12)			; THIS is the item to edit,  put your note number here,  in place of 42
+		{
+			spotifyHwnd := getSpotifyHwnd() ; Show spotify
+			WinGet, style, Style, ahk_id %spotifyHwnd%
+			if (style & 0x10000000) { ; WS_VISIBLE
+				WinHide, ahk_id %spotifyHwnd%
+			} Else {
+				WinShow, ahk_id %spotifyHwnd%
+				WinActivate, ahk_id %spotifyHwnd%
+			}
+			Return
+		}
+
 	}
 	
 	if statusbyte between 128 and 143  ; Is message a Note Off?
@@ -430,4 +485,3 @@ OpenCloseMidiAPI() {  ; at the beginning to load, at the end to unload winmm.dll
 		Exit
 	}
 }
-
