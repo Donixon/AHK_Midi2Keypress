@@ -20,7 +20,7 @@ Maybe not needed.
 */
 
 
-;#NoTrayIcon
+#NoTrayIcon
 #InstallKeybdHook
 #UseHook
 DetectHiddenWindows, On
@@ -36,9 +36,6 @@ SetWorkingDir %A_ScriptDir% 	; Ensures a consistent starting directory.
 ; Get the HWND of the Spotify main window.
 getSpotifyHwnd() {
 	WinGet, spotifyHwnd, ID, ahk_exe spotify.exe
-	; We need the app's third top level window, so get next twice.
-	spotifyHwnd := DllCall("GetWindow", "uint", spotifyHwnd, "uint", 2)
-	spotifyHwnd := DllCall("GetWindow", "uint", spotifyHwnd, "uint", 2)
 	Return spotifyHwnd
 }
 
@@ -485,3 +482,4 @@ OpenCloseMidiAPI() {  ; at the beginning to load, at the end to unload winmm.dll
 		Exit
 	}
 }
+
